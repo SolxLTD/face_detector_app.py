@@ -18,10 +18,6 @@ Welcome to the Face Detection App! This tool uses the **Viola-Jones algorithm** 
 ---
 """)
 
-# --- Constants & Global Setup ---
-
-# IMPORTANT: You must ensure 'haarcascade_frontalface_default.xml' is in the same
-# directory as this script, or replace this string with the full path to the file.
 CASCADE_FILE = "haarcascade_frontalface_default.xml" 
 
 face_cascade = None
@@ -34,8 +30,7 @@ try:
 except Exception as e:
     st.error(f"⚠️ An unexpected error occurred during cascade loading: {e}")
 
-# --- Utility Function: Color Conversion ---
-# Convert hex color from Streamlit to BGR for OpenCV
+
 def hex_to_bgr(hex_color):
     hex_color = hex_color.lstrip('#')
     h_len = len(hex_color)
@@ -43,10 +38,8 @@ def hex_to_bgr(hex_color):
     # OpenCV uses BGR, so reverse the RGB tuple
     return rgb[::-1] 
 
-# --- Sidebar Configuration (User Controls) ---
 st.sidebar.header("Detection Settings")
 
-# 3. Feature: Rectangle Color (Implemented with st.color_picker)
 selected_color_hex = st.sidebar.color_picker(
     'Choose Rectangle Color', 
     '#FF0000', # Default to Red
@@ -54,7 +47,6 @@ selected_color_hex = st.sidebar.color_picker(
 )
 bgr_color = hex_to_bgr(selected_color_hex)
 
-# 5. Feature: scaleFactor (Implemented with st.slider)
 scaleFactor = st.sidebar.slider(
     'Scale Factor',
     min_value=1.01,
@@ -64,7 +56,6 @@ scaleFactor = st.sidebar.slider(
     help="Determines the reduction rate of the image size at each detection scale. Lower values (e.g., 1.05) are more thorough but slower. Typical range: 1.1 - 1.3"
 )
 
-# 4. Feature: minNeighbors (Implemented with st.slider)
 minNeighbors = st.sidebar.slider(
     'Minimum Neighbors',
     min_value=1,
@@ -120,13 +111,11 @@ if uploaded_file is not None and face_cascade is not None and not face_cascade.e
     else:
         st.success(f"Detection Complete! Found {len(faces)} face(s).")
     
-    # Convert the processed image to bytes for download
     img_save = Image.fromarray(img_rgb)
     buffer = io.BytesIO()
     img_save.save(buffer, format="PNG")
     processed_image_bytes = buffer.getvalue()
     
-    # Store the detected image data in session state for the download button
     st.session_state['processed_image'] = processed_image_bytes
     
 # --- Download Button (2. Feature: Save Image) ---
@@ -141,7 +130,6 @@ if 'processed_image' in st.session_state and processed_image_bytes is not None:
 else:
     st.info("Upload an image to start face detection and unlock the download option.")
 
-# --- Reminder/Disclaimer ---
 st.sidebar.markdown("""
 ---
 **Technical Note:**
