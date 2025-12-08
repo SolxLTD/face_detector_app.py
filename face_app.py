@@ -6,17 +6,17 @@ import io
 import base64
 
 st.title("Interactive Viola-Jones Face Detector")
-st.markdown("""
+st.markdown("
 Welcome to the Face Detection App! This tool uses the **Viola-Jones algorithm** (implemented via OpenCV's Haar Cascades) to detect frontal faces in an uploaded image.
 
-### 📷 How to Use:
+# 📷 How to Use:
 1.  **Upload an Image** (JPG/PNG) in the sidebar.
 2.  **Adjust the Detection Parameters** (`Scale Factor` and `Min Neighbors`) in the sidebar to fine-tune the detection sensitivity.
 3.  **Pick a Rectangle Color** for the bounding boxes.
 4.  The processed image will appear below with detected faces highlighted.
 5.  Click **'Download Processed Image'** to save the result.
 ---
-""")
+")
 
 CASCADE_FILE = "haarcascade_frontalface_default.xml" 
 
@@ -25,7 +25,6 @@ try:
 
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     if face_cascade.empty():
-        # Display error if the file is not found or cannot be loaded
         st.error(f"⚠️ Error: Could not load Haar Cascade from '{CASCADE_FILE}'. Please ensure the XML file is in the correct location.")
 except Exception as e:
     st.error(f"⚠️ An unexpected error occurred during cascade loading: {e}")
@@ -65,19 +64,16 @@ minNeighbors = st.sidebar.slider(
     help="Specifies how many neighbors a candidate rectangle must have to be considered a face. Higher values reduce false positives but may miss real faces. Typical range: 3 - 6"
 )
 
-# --- Image Upload ---
 uploaded_file = st.sidebar.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
 
 processed_image_bytes = None
 
 if uploaded_file is not None and face_cascade is not None and not face_cascade.empty():
     
-    # Read image and convert to OpenCV format (BGR)
     image_bytes = uploaded_file.read()
     image_pil = Image.open(io.BytesIO(image_bytes))
     img_array = np.array(image_pil.convert('RGB'))
     
-    # Convert RGB to BGR for OpenCV
     img_bgr = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
     gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
 
@@ -86,7 +82,6 @@ if uploaded_file is not None and face_cascade is not None and not face_cascade.e
 
     st.subheader("Detected Faces Result")
 
-    # Perform face detection using user-defined parameters
     faces = face_cascade.detectMultiScale(
         gray,
         scaleFactor=scaleFactor,
@@ -94,18 +89,14 @@ if uploaded_file is not None and face_cascade is not None and not face_cascade.e
         minSize=(30, 30) # Minimum face size to consider
     )
 
-    # Draw rectangles around the faces
     img_processed = img_bgr.copy()
     for (x, y, w, h) in faces:
         cv2.rectangle(img_processed, (x, y), (x + w, y + h), bgr_color, 2)
     
-    # Convert BGR back to RGB for Streamlit display
     img_rgb = cv2.cvtColor(img_processed, cv2.COLOR_BGR2RGB)
     
-    # Display the result
     st.image(img_rgb, caption=f"Detected {len(faces)} faces using Scale Factor={scaleFactor} and Min Neighbors={minNeighbors}", use_column_width=True)
     
-    # Status message
     if len(faces) == 0:
         st.warning("No faces detected with the current settings. Try adjusting the parameters or uploading a clearer image.")
     else:
