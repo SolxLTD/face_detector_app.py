@@ -6,7 +6,7 @@ import io
 import base64
 
 st.title("Interactive Viola-Jones Face Detector")
-st.markdown("
+st.markdown("""
 Welcome to the Face Detection App! This tool uses the **Viola-Jones algorithm**") (implemented via OpenCV's Haar Cascades) to detect frontal faces in an uploaded image.
 
 # 📷 How to Use:
@@ -15,7 +15,7 @@ Welcome to the Face Detection App! This tool uses the **Viola-Jones algorithm**"
 3.  **Pick a Rectangle Color** for the bounding boxes.
 4.  The processed image will appear below with detected faces highlighted.
 5.  Click **'Download Processed Image'** to save the result.
-")
+""")
 
 CASCADE_FILE = "haarcascade_frontalface_default.xml" 
 
